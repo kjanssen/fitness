@@ -16,7 +16,7 @@
             console.log(payload);
 
             $.ajax({
-                url: "/",
+                url: "/usercheck",
                 type: "POST",
                 contentType: "application/json",
                 processData: false,
@@ -46,7 +46,6 @@
                 }
             });
         });
-
     });
 </script>
 </head>
@@ -75,12 +74,13 @@
         </tr>
         <tr>
           <td></td>
-          <td><input id="login-submit" type="submit" value="Login"/></td>
+          <td><input id="login-check" type="submit" value="Check"/></td>
         </tr>
       </table>
 
       <p id="output"></p>
-      <a href="/createuser">Create New User</a>
+      <a href="/createuser">Create New User</a><br>
+      <a href="/userhome">User Home</a>
     </div>
   </div>
   
