@@ -1,6 +1,9 @@
 var express = require('express');
 var connect = require('connect');
 var mysql = require('mysql');
+var ejs = require('ejs');
+
+var routes = require('./controller/index');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -10,20 +13,37 @@ var connection = mysql.createConnection({
 });
 
 var app = express();
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+app.set('subtitle', 'Lab 18');
 app.use(connect.urlencoded());
 app.use(connect.json());
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {
-    res.sendfile(__dirname + '/index.html');
-});
+//app.get('/', function(req, res) {
+    // res.sendfile(__dirname + '/index.html');
+    // res.render('index');
+//});
 
 app.get('/createuser', function(req, res) {
-    res.sendfile(__dirname + '/createuser.html');
+    // res.sendfile(__dirname + '/createuser.html');
+    res.render('createuser');
 });
 
-app.get('/userhome', function(req, res) {
-    res.sendfile(__dirname + '/userhome.html');
+app.get('/lab18', function(req, res) {
+    res.render('lab18');
+});
+
+app.get('/users', function(req, res) {
+    console.log(req);
+    var query = 'SELECT ID, Username FROM user;';
+    connection.query(query, function(err, result) {
+        console.log(err);
+        console.log(result);
+        if (result) {
+            res.render('displayUserTable.ejs', {rs: result});
+        }
+    });
 });
 
 app.post('/usercheck', function(req, res) {
@@ -58,15 +78,21 @@ app.post('/createuser', function(req, res) {
 
 app.post('/userhome', function(req, res) {
     console.log(req.body);
-    connection.query('SELECT Username, Password FROM user WHERE Username=' + connection.escape(req.body.username) +
+    connection.query('SELECT ID, Username, Password FROM user WHERE Username=' + connection.escape(req.body.username) +
                      ' AND Password=' + connection.escape(req.body.password) + ';',
                      function(err, result) {
                          console.log(err);
                          console.log(result);
                          if (result.length > 0) {
-                             res.sendfile(__dirname + '/userhome.html');
+
+                             var query = 'SELECT ID, Date, TimeOfDay, Location FROM workout WHERE UserID=' +
+                                 connection.escape(result[0].ID) + ';';
+
+                             connection.query(query, function(err, result) {
+                                 res.render('userhome', {workouts: result});
+                             });
                          } else
-                             res.send('Username or Password not correct');
+                             res.render('index', {message: 'Username or Password not correct'});
                      });
 });
 
@@ -109,6 +135,8 @@ app.post('/userexercises', function(req, res) {
 			 }
 		     });
 });
+
+app.use('/', routes);
 
 var server = app.listen(1337, function() {
     console.log('Listening on port %d', server.address().port);

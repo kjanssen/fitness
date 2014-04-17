@@ -1,0 +1,73 @@
+<% include header %>
+    <h2>Fitness App - Login</h2>
+    <p>
+        This idea came to me because I got tired of writing my workout logs on notepaper. My 'archives' were
+        some loose peices of engineering paper floating around on the workbench in my garage. So, welcome to
+        the new age.
+    </p>
+    <form id="login" name="login" action="/userhome" method="POST">
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input id="login-username" type="text" name="username"/></td>
+            </tr>
+            <tr>
+                <td>New Password:</td>
+                <td><input id="login-password" type="password" name="password" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input id="login-submit" type="submit" value="Login"/>
+                    <input id="login-check" type="button" value="Check"/></td>
+            </tr>
+        </table>
+
+        <p id="output"><% if (message) { %><%= message %><% } %></p>
+        <a href="/createuser">Create New User</a><br>
+    </form>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#login-check').click(function() {
+            var payload = {
+                username: $('#login-username').val(),
+                password: $('#login-password').val()
+            };
+
+            console.log(payload);
+
+            $.ajax({
+                url: "/usercheck",
+                type: "POST",
+                contentType: "application/json",
+                processData: false,
+                data: JSON.stringify(payload),
+                complete: function(data) {
+                    $('#output').html(data.responseText);
+                }
+            });
+        });
+
+//        $('#login-submit').click(function() {
+//            var payload = {
+//                username: $('#login-username').val(),
+//                password: $('#login-password').val()
+//            };
+//
+//            console.log(payload);
+//
+//            $.ajax({
+//                url: "/userhome",
+//                type: "GET",
+//                contentType: "application/json",
+//                processData: false,
+//                data: JSON.stringify(payload),
+//                complete: function(data) {
+//                    $('#output').html(data.responseText);
+//                }
+//            });
+//        });
+    });
+</script>
+<% include footer %>

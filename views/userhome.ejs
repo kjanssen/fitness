@@ -1,0 +1,56 @@
+<% include header %>
+<h2>Fitness App - User Home</h2>
+<div id="workouts">
+    <% if (workouts) { %>
+        <h3>Workouts</h3>
+
+        <table>
+            <tr>
+                <th></th>
+                <th>Date</th>
+                <th>Time of Day</th>
+                <th>Location</th>
+            </tr>
+
+            <% for (var i = 0; i < workouts.length; i++) { %>
+                <tr>
+                    <td><%= i + 1 %></td>
+                    <td><%= workouts[i].Date %></td>
+                    <td><%= workouts[i].TimeOfDay %></td>
+                    <td><%= workouts[i].Location %></td>
+                </tr>
+            <% } %>
+        </table>
+    <% } %>
+</div>
+<div id="exercises">
+</div>
+
+<p><a href="/">< Home</a></p>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+//        $.ajax({
+//            url: "/userworkouts",
+//            type: "POST",
+//            contentType: "application/json",
+//            processData: false,
+//            complete: function (data) {
+//                $('#workouts').html(data.responseText);
+//            }
+//        });
+
+        $.ajax({
+            url: "/userexercises",
+            type: "POST",
+            contentType: "application/json",
+            processData: false,
+            complete: function (data) {
+                $('#exercises').html(data.responseText);
+            }
+        });
+    });
+</script>
+<% include footer %>
