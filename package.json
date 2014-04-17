@@ -4,7 +4,10 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
-        "express": "4.0",
-	"mysql": "2.1"
+        "express": "4.x",
+	    "mysql": "2.x",
+        "connect": "2.x",
+        "ejs": "1.x",
+        "dateformat": "1.x"
     }
 }

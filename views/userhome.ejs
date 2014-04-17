@@ -1,5 +1,5 @@
 <% include header %>
-<h2>Fitness App - User Home</h2>
+<h2>Fitness App - <%= user.Username %>'s Home</h2>
 <div id="workouts">
     <% if (workouts) { %>
         <h3>Workouts</h3>
@@ -12,11 +12,11 @@
                 <th>Location</th>
             </tr>
 
-            <% for (var i = 0; i < workouts.length; i++) { %>
+            <% for (var i = workouts.length - 1; i >= 0; i--) { %>
                 <tr>
                     <td><%= i + 1 %></td>
                     <td><%= workouts[i].Date %></td>
-                    <td><%= workouts[i].TimeOfDay %></td>
+                    <td><%= workouts[i].TimeOfDay.charAt(0) + workouts[i].TimeOfDay.slice(1).toLowerCase() %></td>
                     <td><%= workouts[i].Location %></td>
                 </tr>
             <% } %>
@@ -31,17 +31,6 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-
-//        $.ajax({
-//            url: "/userworkouts",
-//            type: "POST",
-//            contentType: "application/json",
-//            processData: false,
-//            complete: function (data) {
-//                $('#workouts').html(data.responseText);
-//            }
-//        });
-
         $.ajax({
             url: "/userexercises",
             type: "POST",
