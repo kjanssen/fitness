@@ -24,22 +24,19 @@
     <% } %>
 </div>
 <div id="exercises">
+    <% if (exercises) { %>
+        <h3>Exercises</h3>
+
+        <select id="select-exercises" name="exercises">
+            <option value="-1">-- Select an exercise --</option>
+
+            <% for (var i = 0; i < exercises.length; i++) { %>
+                <option value="<%= i %>"><%= exercises[i].Name + ', ' + exercises[i].Type %></option>
+            <% } %>
+        </select>
+    <% } %>
 </div>
 
 <p><a href="/">< Home</a></p>
 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $.ajax({
-            url: "/userexercises",
-            type: "POST",
-            contentType: "application/json",
-            processData: false,
-            complete: function (data) {
-                $('#exercises').html(data.responseText);
-            }
-        });
-    });
-</script>
 <% include footer %>

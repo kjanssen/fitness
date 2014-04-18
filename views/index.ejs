@@ -5,7 +5,7 @@
         some loose peices of engineering paper floating around on the workbench in my garage. So, welcome to
         the new age.
     </p>
-    <form id="login" name="login" action="/userhome" method="POST">
+    <form id="login" name="login" action="/user/home" method="POST">
         <table>
             <tr>
                 <td>Username:</td>
@@ -23,7 +23,7 @@
         </table>
 
         <p id="output"><% if (message) { %><%= message %><% } %></p>
-        <a href="/createuser">Create New User</a><br>
+        <a href="/user/create">Create New User</a><br>
     </form>
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -38,7 +38,7 @@
             console.log(payload);
 
             $.ajax({
-                url: "/usercheck",
+                url: "/user/check",
                 type: "POST",
                 contentType: "application/json",
                 processData: false,
@@ -48,26 +48,6 @@
                 }
             });
         });
-
-//        $('#login-submit').click(function() {
-//            var payload = {
-//                username: $('#login-username').val(),
-//                password: $('#login-password').val()
-//            };
-//
-//            console.log(payload);
-//
-//            $.ajax({
-//                url: "/userhome",
-//                type: "GET",
-//                contentType: "application/json",
-//                processData: false,
-//                data: JSON.stringify(payload),
-//                complete: function(data) {
-//                    $('#output').html(data.responseText);
-//                }
-//            });
-//        });
     });
 </script>
 <% include footer %>
