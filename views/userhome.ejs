@@ -1,10 +1,17 @@
 <% include header %>
 <h2>Fitness App - <%= user.Username %>'s Home</h2>
 <div id="workouts">
-    <% if (workouts) { %>
-        <h3>Workouts</h3>
 
-        <table>
+    <h3>Workouts</h3>
+
+    <form id="new-workout-form" name="new-workout" action="/workout/new" method="POST">
+        <input type="hidden" name="userid" value="<%= user.ID %>">
+        <input id="new-workout-button" type="submit" value="New Workout" />
+    </form><br>
+
+    <% if (workouts) { %>
+
+        <table class="info">
             <tr>
                 <th></th>
                 <th>Date</th>
@@ -12,15 +19,17 @@
                 <th>Location</th>
             </tr>
 
-            <% for (var i = workouts.length - 1; i >= 0; i--) { %>
-                <tr>
-                    <td><%= i + 1 %></td>
-                    <td><%= workouts[i].Date %></td>
-                    <td><%= workouts[i].TimeOfDay.charAt(0) + workouts[i].TimeOfDay.slice(1).toLowerCase() %></td>
-                    <td><%= workouts[i].Location %></td>
+            <% for (var i = 0; i <= 10 && i < workouts.length; i++) { %>
+                <tr <% if (i % 2 === 0) { %>class="alt"<% } %>>
+                    <td><a href="javascript:PostWorkout(<%= workouts[workouts.length - i - 1].ID %>)">Select</a></td>
+                    <td><%= workouts[workouts.length - i - 1].Date %></td>
+                    <td><%= workouts[workouts.length - i - 1].TimeOfDay.charAt(0) + workouts[workouts.length - i - 1].TimeOfDay.slice(1).toLowerCase() %></td>
+                    <td><%= workouts[workouts.length - i - 1].Location %></td>
                 </tr>
             <% } %>
         </table>
+
+        <p><a href="">All Workouts >></a></p>
     <% } %>
 </div>
 <div id="exercises">
@@ -38,5 +47,14 @@
 </div>
 
 <p><a href="/">< Home</a></p>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    function PostWorkout(workoutid) {
+        console.log(workoutid);
+    }
+
+</script>
 
 <% include footer %>

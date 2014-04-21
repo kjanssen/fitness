@@ -6,6 +6,28 @@ body {
   
 h1, h2, h3, h4 {
     color:          #7aad12;}
+
+table.info {
+    border-collapse: collapse;
+}
+
+.info th {
+    text-align: left;
+    padding-top: 5px;
+    padding-bottom: 4px;
+    background-color: #A7C942;
+    color: #FFF;
+}
+
+.info td, .info th {
+    border: 1px solid #98BF21;
+    padding: 3px 7px 2px;
+}
+
+.info tr.alt td {
+    color: #000;
+    background-color: #EAF2D3;
+}
     
 a:link {
     color:              #808000;}
