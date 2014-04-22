@@ -5,6 +5,7 @@
     <h3>Workouts</h3>
 
     <form id="new-workout-form" name="new-workout" action="/workout/new" method="POST">
+        <input type="hidden" name="username" value="<%= user.Username %>">
         <input type="hidden" name="userid" value="<%= user.ID %>">
         <input id="new-workout-button" type="submit" value="New Workout" />
     </form><br>

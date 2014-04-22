@@ -1,4 +1,146 @@
 <% include header %>
-<h2>Fitness App - <%= user.Username %>'s Home</h2>
+<input id="userid" type="hidden" value="<%= user.userid %>" />
+<h2><%= user.username %>'s New Workout</h2>
+
+<div id="workoutInfo">
+    <h4>Workout Info</h4>
+    <table>
+        <tr>
+            <% var date = new Date(); %>
+            <td>Date (yyyy-mm-dd):</td>
+            <td><input id="date" type="text" value="<%= date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() %>" /></td>
+        </tr>
+        <tr>
+            <td>Time of Day:</td>
+            <td><select id="timeOfDay">
+                    <option value="EARLY_MORNING">Early Morning</option>
+                    <option value="MORNING">Morning</option>
+                    <option value="AFTERNOON">Afternoon</option>
+                    <option value="LATE_AFTERNOON">Late Afternoon</option>
+                    <option value="EVENING">Evening</option>
+                    <option value="NIGHT">Night</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td>Location:</td>
+            <td><input id="location" type="text" /></td>
+        </tr>
+    </table>
+</div>
+
+<h4>Exercises</h4>
+<table id="exerciseList" class="info">
+    <tr>
+        <th>Exercise</th>
+        <th>Weight</th>
+        <th>Sets</th>
+        <th>Reps</th>
+        <th>Duration</th>
+        <th>Completed</th>
+        <th>Comments</th>
+    </tr>
+</table>
+
+<div id="addExercise">
+    <h4>Add Exercise</h4>
+    <table>
+        <tr>
+            <td>Exercise:</td>
+            <td>Weight:</td>
+            <td>Sets:</td>
+            <td>Reps:</td>
+            <td>Duration (hh:mm:ss):</td>
+            <td>Completed:</td>
+        </tr>
+        <tr>
+            <td>
+                <% if (exercises) { %>
+                    <select id="exercise" name="exercises">
+                        <option value="-1">-- Select an exercise --</option>
+
+                        <% for (var i = 0; i < exercises.length; i++) { %>
+                            <option value="<%= exercises[i].ID %>"><%= exercises[i].Name + ', ' + exercises[i].Type %></option>
+                        <% } %>
+                    </select>
+                <% } %>
+            </td>
+            <td><input id="weight" type="number" value="0" /></td>
+            <td><input id="sets" type="number" value="0" /></td>
+            <td><input id="reps" type="number" value="0" /></td>
+            <td><input id="duration" type="text" value="00:00:00" /></td>
+            <td><input id="completed" type="checkbox"></td>
+        </tr>
+    </table>
+    Comments:<br>
+    <textarea id="comments"></textarea><br>
+    <button id="submitExercise">Add Exercise</button>
+</div>
+<br><br>
+<p id="output"></p>
+<button id="submitWorkout">Submit Workout</button>
 
 <% include footer %>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var exercises = new Array();
+
+        $('#submitExercise').click(function() {
+            var exercise = {
+                exerciseid: $('#exercise').val(),
+                weight: $('#weight').val(),
+                sets: $('#sets').val(),
+                reps: $('#reps').val(),
+                duration: $('#duration').val(),
+                completed: $('#completed').is(':checked') ? 'YES' : 'NO',
+                comments: $('#comments').val()
+            };
+
+            var index = exercises.push(exercise);
+            console.log(exercise);
+            console.log(index);
+
+            $('#exerciseList').append(
+                    '<tr ' + (index % 2 === 0 ? 'class="alt"' : '') + ' >' +
+                            '<td>' + $( "#exercise option:selected" ).text() + '</td>' +
+                            '<td>' + exercise.weight + ' lbs</td>' +
+                            '<td>' + exercise.sets + ' sets</td>' +
+                            '<td>' + exercise.reps + ' reps</td>' +
+                            '<td>' + exercise.duration + '</td>' +
+                            '<td>' + exercise.completed + '</td>' +
+                            '<td>' + exercise.comments + '</td>' +
+                    '</tr>'
+            );
+
+            $('#exercise').val('-1');
+            $('#weight').val('0');
+            $('#sets').val('0');
+            $('#reps').val('0');
+            $('#duration').val('00:00:00');
+            $('#completed').prop('checked', false);
+            $('#comments').val('');
+        });
+
+        $('#submitWorkout').click(function() {
+            console.log(exercises);
+
+            var workout = {
+                userid: <%= user.userid %>, //$('#userid').val(),
+                date: $('#date').val(),
+                timeOfDay: $('#timeOfDay').val(),
+                location: $('#location').val()
+            };
+
+            var payload = {
+                workout: workout,
+                exercises: exercises
+            };
+
+            $.post('/workout/create', payload, function(data) {
+                $('#output').html(data.responseText);
+            });
+        });
+    });
+</script>

@@ -42,7 +42,7 @@ a:hover {
   color:            #000000;}
   
 #container {
-  width:            70%;
+  width:            1000px;
   min-width:        770px;
   max-width:        1000px;
   margin-left:      auto;

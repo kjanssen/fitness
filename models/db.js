@@ -73,3 +73,51 @@ exports.GetExercises = function(callback) {
         callback(result);
     });
 };
+
+exports.CreateWorkout = function(workout, callback) {
+
+    var query = 'INSERT INTO workout (Date, UserID, Location, TimeOfDay) VALUES (' + connection.escape(workout.date) +
+                ', ' + connection.escape(workout.userid) + ', ' + connection.escape(workout.location) + ', ' +
+                connection.escape(workout.timeOfDay) + ');';
+
+    connection.query(query, function(err, result) {
+        if (err) {
+            console.log(err);
+
+            if (err.code === 'ER_DUP_ENTRY')
+                callback(true, { message: 'Workout at that time already exists.', id: null });
+            else
+                callback(true, { message: 'Error: Could not create workout.', id: null});
+
+            return;
+        }
+
+        console.log(result);
+        callback(false, { message: 'Workout has been created.', id: result.insertId});
+    });
+};
+
+exports.AddExerciseDone = function(workoutid, exercise, callback) {
+
+    var query = 'INSERT INTO exercise_done (WorkoutID, ExerciseID, Weight, Sets, Reps, Duration, Completed, Comment) ' +
+                'VALUES (' + connection.escape(workoutid) + ', ' + connection.escape(exercise.exerciseid) + ', ' +
+                connection.escape(exercise.weight) + ', ' + connection.escape(exercise.sets) + ', ' +
+                connection.escape(exercise.reps) + ', ' + connection.escape(exercise.duration) + ', ' +
+                connection.escape(exercise.completed) + ', ' + connection.escape(exercise.comments) + ');';
+
+    connection.query(query, function(err, result) {
+        if (err) {
+            console.log(err);
+
+            if (err.code === 'ER_DUP_ENTRY')
+                callback(true, 'Cannot save the same exercise twice per workout.');
+            else
+                callback(true, 'Error: Could not save exercise.');
+
+            return;
+        }
+
+        console.log(result);
+        callback(false, 'Exercise has been saved.');
+    });
+};
