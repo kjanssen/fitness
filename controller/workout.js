@@ -22,7 +22,7 @@ router.post('/create', function(req, res) {
 
     db.CreateWorkout(req.body.workout, function(err, result) {
         if (err) {
-            res.send(result.message + ' Exercises not saved.');
+            res.send({message: result.message + ' Exercises not saved.'});
             return;
         }
 
@@ -39,9 +39,9 @@ router.post('/create', function(req, res) {
         }
 
         if (failed > 0)
-            res.send(failed + ' exercises not saved. ' + message);
+            res.send({message: failed + ' exercises not saved. ' + message});
         else
-            res.send(result.message);
+            res.send({message: result.message});
     });
 });
 

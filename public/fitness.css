@@ -76,3 +76,9 @@ a:hover {
   
 .center {
   text-align:       center;}
+
+.node {
+    border-radius:      15px;
+    background:       #9acd32;
+    padding:          5px 10px;
+}

@@ -121,3 +121,25 @@ exports.AddExerciseDone = function(workoutid, exercise, callback) {
         callback(false, 'Exercise has been saved.');
     });
 };
+
+exports.CreateExercise = function(name, type, callback) {
+
+    var query = 'INSERT INTO exercise (Name, Type) VALUES (' + connection.escape(name) + ', ' +
+                connection.escape(type) + ');';
+
+    connection.query(query, function(err, result) {
+        if (err) {
+            console.log(err);
+
+            if (err.code === 'ER_DUP_ENTRY')
+                callback(true, {message: 'Exercise already exists.', id: null});
+            else
+                callback(true, {message: 'Error: Could not add exercise.', id: null});
+
+            return;
+        }
+
+        console.log(result);
+        callback(false, {message: 'Exercise has been added.', id: result.insertId});
+    });
+};

@@ -57,6 +57,7 @@
                 <% if (exercises) { %>
                     <select id="exercise" name="exercises">
                         <option value="-1">-- Select an exercise --</option>
+                        <option value="-2" id="newExercise">-- New Exercise --</option>
 
                         <% for (var i = 0; i < exercises.length; i++) { %>
                             <option value="<%= exercises[i].ID %>"><%= exercises[i].Name + ', ' + exercises[i].Type %></option>
@@ -71,12 +72,19 @@
             <td><input id="completed" type="checkbox"></td>
         </tr>
     </table>
-    Comments:<br>
+    <div id="newExerciseDiv" class="node">
+        New Exercise:<br>
+        Name: <input id="exerciseName" type="text" />
+        Type: <input id="exerciseType" type="text" />
+        <button id="newExerciseButton">Add</button>
+    </div>
+    <div id="newExerciseOutput" class="node"></div>
+    Comments: <br>
     <textarea id="comments"></textarea><br>
     <button id="submitExercise">Add Exercise</button>
 </div>
 <br><br>
-<p id="output"></p>
+<p id="output" class="node"></p>
 <button id="submitWorkout">Submit Workout</button>
 
 <% include footer %>
@@ -86,6 +94,9 @@
     $(document).ready(function() {
 
         var exercises = new Array();
+
+        $('#newExerciseDiv').hide();
+        $('#newExerciseOutput').hide();
 
         $('#submitExercise').click(function() {
             var exercise = {
@@ -139,8 +150,37 @@
             };
 
             $.post('/workout/create', payload, function(data) {
-                $('#output').html(data.responseText);
+                $('#output').empty().append(data.message);
             });
+        });
+
+        $('#newExerciseButton').click(function() {
+            var newExercise = {
+                name: $('#exerciseName').val(),
+                type: $('#exerciseType').val()
+            };
+
+            $.post('/exercise/create', newExercise, function(data) {
+                console.log(data);
+                $('#newExerciseOutput').html(data.message);
+                $('#newExerciseDiv').hide();
+                $('#newExerciseOutput').show();
+
+                if (data.err === false) {
+                    $('#exercise').append('<option value="' + data.id + '">' + newExercise.name + ', ' +
+                                            newExercise.type + '</option>');
+                    $('#exercise').val(data.id);
+                }
+            });
+        });
+
+        $('#exercise').change(function() {
+            if ($('#exercise').val() === '-2') {
+                $('#newExerciseDiv').show();
+            } else {
+                $('#newExerciseDiv').hide();
+                $('#newExerciseOutput').hide();
+            }
         });
     });
 </script>
