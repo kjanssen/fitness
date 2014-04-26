@@ -85,6 +85,16 @@ a:hover {
     margin-bottom: 20px;
 }
 
+.leftbar {
+    width: 450px;
+    margin-bottom: 20px;
+}
+
+.inset {
+    background:       #ffffff;
+    padding:          10px;
+}
+
 .node {
     border-radius:      15px;
     background:       #9acd32;

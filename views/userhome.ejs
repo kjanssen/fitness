@@ -3,6 +3,25 @@
 
 <div id="userinfo" class="node floatright">
     <h3><%= user.Username %>'s Info</h3>
+
+    <table>
+        <tr>
+            <th>Gender:</th>
+            <td><%= user.Gender === null ? '' : user.Gender %></td>
+        </tr>
+        <tr>
+            <th>Age:</th>
+            <td><%= user.Age === null ? '' : user.Age %></td>
+        </tr>
+        <tr>
+            <th>Height:</th>
+            <td><%= user.Height === null ? '' : (Math.floor(user.Height / 12) + "'" + (user.Height % 12) + '"') %></td>
+        </tr>
+        <tr>
+            <th>Weight:</th>
+            <td><%= user.Weight === null ? '' : (user.Weight + 'lbs') %></td>
+        </tr>
+    </table>
 </div>
 
 <div id="social" class="node floatright">
@@ -12,7 +31,12 @@
             No current friends
         <% } else { %>
             <% for (var i = 0; i < friends.length; i++) { %>
-                <a href=""><%= friends[i].Username %></a><br>
+                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                    <input type="hidden" name="userid" value="<%= friends[i].ID %>">
+                    <input type="hidden" name="homeuserid" value="<%= user.ID %>">
+                    <input type="hidden" name="homeusername" value="<%= user.Username %>">
+                    <input class="viewUserButton" type="submit" value="<%= friends[i].Username %>" />
+                </form>
             <% } %>
         <% } %>
     <h4>Following</h4>
@@ -20,7 +44,12 @@
             No current following
         <% } else { %>
             <% for (var i = 0; i < following.length; i++) { %>
-                <a href=""><%= following[i].Username %></a><br>
+                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                    <input type="hidden" name="userid" value="<%= following[i].ID %>">
+                    <input type="hidden" name="homeuserid" value="<%= user.ID %>">
+                    <input type="hidden" name="homeusername" value="<%= user.Username %>">
+                    <input class="viewUserButton" type="submit" value="<%= following[i].Username %>" />
+                </form>
             <% } %>
         <% } %>
     <h4>Followers</h4>
@@ -28,12 +57,17 @@
             No current followers
         <% } else { %>
             <% for (var i = 0; i < followers.length; i++) { %>
-                <a href=""><%= followers[i].Username %></a><br>
+                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                    <input type="hidden" name="userid" value="<%= followers[i].ID %>">
+                    <input type="hidden" name="homeuserid" value="<%= user.ID %>">
+                    <input type="hidden" name="homeusername" value="<%= user.Username %>">
+                    <input class="viewUserButton" type="submit" value="<%= followers[i].Username %>" />
+                </form>
             <% } %>
         <% } %>
 </div>
 
-<div id="exercises" class="node floatright">
+<div id="exercises">
     <% if (exercises) { %>
     <h3>Exercises</h3>
 

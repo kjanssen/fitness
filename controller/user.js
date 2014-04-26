@@ -7,11 +7,11 @@ router.use(express.static(__dirname + '/../public'));
 
 router.post('/check', function(req, res) {
     console.log(req.body);
-    db.CheckUser(req.body.username, req.body.password,
-        function(err, result) {
+    db.GetUserByPassword(req.body.username, req.body.password,
+        function(err, users) {
             if (err) throw err;
-            if (result.length > 0)
-                res.send('Username and Password correct for user ' + result[0].Username);
+            if (users.length > 0)
+                res.send('Username and Password correct for user ' + users[0].Username);
             else
                 res.send('Username or Password not correct');
         }
@@ -33,55 +33,128 @@ router.post('/create', function(req, res) {
 
 router.post('/home', function(req, res) {
     console.log(req.body);
-    db.CheckUser(req.body.username, req.body.password,
-        function(err, result) {
-            if (err) throw err;
-            if (result.length > 0)
-                db.GetWorkouts(result[0].ID, function(workouts) {
-                    for (var i = 0; i < workouts.length; i++)
-                        workouts[i].Date = dateformat(workouts[i].Date, 'm/d/yy');
 
-                    db.GetExercisesByUser(result[0].ID, function(exercises) {
-                        db.GetFollowers(result[0].ID, function(followers) {
-                            db.GetFollowing(result[0].ID, function(following) {
+    var createUserHome = function(err, users) {
+        if (err) throw err;
+        if (users.length > 0)
+            db.GetWorkouts(users[0].ID, function(workouts) {
+                for (var i = 0; i < workouts.length; i++)
+                    workouts[i].Date = dateformat(workouts[i].Date, 'm/d/yy');
 
-                                console.log('Freinds and followers: ');
-                                console.log(followers);
-                                console.log(following);
+                db.GetExercisesByUser(users[0].ID, function(exercises) {
+                    db.GetFollowers(users[0].ID, function(followers) {
+                        db.GetFollowing(users[0].ID, function(following) {
 
-                                var friends = new Array();
+                            console.log('Freinds and followers: ');
+                            console.log(followers);
+                            console.log(following);
 
-                                for (var i = 0; i < followers.length; i++) {
-                                    for (var j =0; j < following.length; j++) {
-                                        if (followers[i].ID === following[j].ID) {
-                                            friends.push(followers.splice(i, 1)[0]);
-                                            following.splice(j, 1);
-                                            i--;
-                                            break;
-                                        }
+                            var friends = new Array();
+
+                            for (var i = 0; i < followers.length; i++) {
+                                for (var j =0; j < following.length; j++) {
+                                    if (followers[i].ID === following[j].ID) {
+                                        friends.push(followers.splice(i, 1)[0]);
+                                        following.splice(j, 1);
+                                        i--;
+                                        break;
                                     }
                                 }
+                            }
 
-                                console.log(followers);
-                                console.log(following);
-                                console.log(friends);
+                            console.log(followers);
+                            console.log(following);
+                            console.log(friends);
 
-                                res.render('userhome', {user: result[0],
-                                                        workouts: workouts,
-                                                        exercises: exercises,
-                                                        followers: followers,
-                                                        following: following,
-                                                        friends: friends
-                                    }
-                                );
-                            });
+                            res.render('userhome', {user: users[0],
+                                    workouts: workouts,
+                                    exercises: exercises,
+                                    followers: followers,
+                                    following: following,
+                                    friends: friends
+                                }
+                            );
                         });
                     });
                 });
-            else
-                res.render('index', {message: 'Username or Password not correct'});
-        }
-    );
+            });
+        else
+            res.render('index', {message: 'Username or Password not correct'});
+    };
+
+    if ('userid' in req.body) {
+        db.GetUserByID(req.body.userid, createUserHome);
+    } else {
+        db.GetUserByPassword(req.body.username, req.body.password, createUserHome);
+    }
+});
+
+router.post('/view', function(req, res) {
+    console.log(req.body);
+
+    var createUserHome = function(err, users) {
+        if (err) throw err;
+        if (users.length > 0)
+            db.GetWorkouts(users[0].ID, function(workouts) {
+                for (var i = 0; i < workouts.length; i++)
+                    workouts[i].Date = dateformat(workouts[i].Date, 'm/d/yy');
+
+                db.GetExercisesByUser(users[0].ID, function(exercises) {
+                    db.GetFollowers(users[0].ID, function(followers) {
+                        db.GetFollowing(users[0].ID, function(following) {
+
+                            console.log('Freinds and followers: ');
+                            console.log(followers);
+                            console.log(following);
+
+                            var friends = new Array();
+                            var followinguser = false;
+
+                            for (var i = 0; i < followers.length; i++) {
+                                followinguser = followers[i].ID === parseInt(req.body.homeuserid) ? true : followinguser;
+                                for (var j =0; j < following.length; j++) {
+                                    if (followers[i].ID === following[j].ID) {
+                                        friends.push(followers.splice(i, 1)[0]);
+                                        following.splice(j, 1);
+                                        i--;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            console.log(followers);
+                            console.log(following);
+                            console.log(friends);
+                            console.log(followinguser);
+
+                            res.render('viewuser', {
+                                    user: users[0],
+                                    homeuser: {ID: req.body.homeuserid, Username: req.body.homeusername},
+                                    workouts: workouts,
+                                    exercises: exercises,
+                                    followers: followers,
+                                    following: following,
+                                    friends: friends,
+                                    followinguser: followinguser
+                                }
+                            );
+                        });
+                    });
+                });
+            });
+        else
+            res.render('index', {message: 'Username or Password not correct'});
+    };
+
+    db.GetUserByID(req.body.userid, createUserHome);
+});
+
+router.post('/togglefollowing', function(req, res) {
+    console.log(req.body);
+
+    db.ToggleFollowing(req.body.userid, req.body.followerid, function(following) {
+        res.send({following: following});
+    });
 });
 
 module.exports = router;

@@ -95,8 +95,10 @@
 
         var exercises = new Array();
 
+        $('#exerciseList').hide();
         $('#newExerciseDiv').hide();
         $('#newExerciseOutput').hide();
+        $('#output').hide();
 
         $('#submitExercise').click(function() {
             var exercise = {
@@ -124,6 +126,8 @@
                             '<td>' + exercise.comments + '</td>' +
                     '</tr>'
             );
+
+            $('#exerciseList').show();
 
             $('#exercise').val('-1');
             $('#weight').val('0');

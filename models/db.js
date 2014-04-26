@@ -7,12 +7,31 @@ var connection = mysql.createConnection({
     database: 'fitness'
 });
 
-exports.CheckUser = function(username, password, callback) {
+exports.GetUserByPassword = function(username, password, callback) {
 
-    var query = 'SELECT ID, Username, Password ' +
-                    'FROM user ' +
-                    'WHERE Username=' + connection.escape(username) + ' ' +
-                    'AND Password=' + connection.escape(password) + ';';
+    var query = 'SELECT ID, Username, Age, Height, Weight, Gender, Privacy ' +
+        'FROM user ' +
+        'WHERE Username=' + connection.escape(username) + ' ' +
+        'AND Password=' + connection.escape(password) + ';';
+
+    connection.query(query, function(err, result) {
+        console.log(result);
+
+        if (err) {
+            console.log(err);
+            callback(true);
+            return;
+        }
+
+        callback(false, result);
+    });
+};
+
+exports.GetUserByID = function(userid, callback) {
+
+    var query = 'SELECT ID, Username, Age, Height, Weight, Gender, Privacy ' +
+        'FROM user ' +
+        'WHERE ID=' + connection.escape(userid) + ';';
 
     connection.query(query, function(err, result) {
         console.log(result);
@@ -81,6 +100,39 @@ exports.GetFollowing = function(userid, callback) {
         console.log('GetFollowing result:');
         console.log(result);
         callback(result);
+    });
+};
+
+exports.ToggleFollowing = function(userid, followerid, callback) {
+
+    var query = 'SELECT * FROM follower ' +
+                    'WHERE UserID=' + connection.escape(parseInt(userid)) + ' ' +
+                    'AND FollowerID=' + connection.escape(parseInt(followerid)) + ';';
+
+    console.log(query);
+
+    connection.query(query, function(err, result) {
+        console.log('ToggleFollowing err:');
+        console.log(err);
+        console.log('ToggleFollowing result:');
+        console.log(result);
+
+        if (result.length > 0) {
+            var unfollowQuery = 'DELETE FROM follower ' +
+                                    'WHERE UserID=' + connection.escape(userid) + ' ' +
+                                    'AND FollowerID=' + connection.escape(followerid) + ';';
+
+            connection.query(unfollowQuery, function(err, result2) {
+                callback(false);
+            });
+        } else {
+            var followQuery = 'INSERT INTO follower ' +
+                                  'VALUES (' + connection.escape(userid) + ', ' + connection.escape(followerid) + ');';
+
+            connection.query(followQuery, function(err, result2) {
+                callback(true);
+            });
+        }
     });
 };
 

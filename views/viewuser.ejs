@@ -1,0 +1,154 @@
+<% include header %>
+
+<form id="homeForm" name="homeForm" action="/user/home" method="POST" style="float:right; margin-top: 20px;">
+    <input type="hidden" name="userid" value="<%= homeuser.ID %>">
+    <input id="userHomeButton" type="submit" value="<%= homeuser.Username %>'s Home" />
+</form>
+
+<h2>Fitness App - <%= user.Username %>'s Profile</h2>
+
+<div id="userinfo" class="node floatright">
+
+    <input id="followUserButton" type="submit" value="<%= (followinguser ? 'Unfollow' : 'Follow') %>" style="float:right;margin-top: 20px;"/>
+    <h3><%= user.Username %>'s Info</h3>
+
+    <table>
+        <tr>
+            <th>Gender:</th>
+            <td><%= user.Gender === null ? '' : user.Gender %></td>
+        </tr>
+        <tr>
+            <th>Age:</th>
+            <td><%= user.Age === null ? '' : user.Age %></td>
+        </tr>
+        <tr>
+            <th>Height:</th>
+            <td><%= user.Height === null ? '' : (Math.floor(user.Height / 12) + "'" + (user.Height % 12) + '"') %></td>
+        </tr>
+        <tr>
+            <th>Weight:</th>
+            <td><%= user.Weight === null ? '' : (user.Weight + 'lbs') %></td>
+        </tr>
+    </table>
+</div>
+
+<div id="social" class="node floatright">
+    <h3>Social</h3>
+    <h4>Friends</h4>
+    <% if (friends.length === 0) { %>
+    No current friends
+    <% } else { %>
+    <% for (var i = 0; i < friends.length; i++) { %>
+    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+        <input type="hidden" name="userid" value="<%= friends[i].ID %>">
+        <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
+        <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
+        <input class="viewUserButton" type="submit" value="<%= friends[i].Username %>" />
+    </form>
+    <% } %>
+    <% } %>
+    <h4>Following</h4>
+    <% if (following.length === 0) { %>
+    No current following
+    <% } else { %>
+    <% for (var i = 0; i < following.length; i++) { %>
+    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+        <input type="hidden" name="userid" value="<%= following[i].ID %>">
+        <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
+        <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
+        <input class="viewUserButton" type="submit" value="<%= following[i].Username %>" />
+    </form>
+    <% } %>
+    <% } %>
+    <h4>Followers</h4>
+    <% if (followers.length === 0) { %>
+    No current followers
+    <% } else { %>
+    <% for (var i = 0; i < followers.length; i++) { %>
+    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+        <input type="hidden" name="userid" value="<%= followers[i].ID %>">
+        <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
+        <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
+        <input class="viewUserButton" type="submit" value="<%= followers[i].Username %>" />
+    </form>
+    <% } %>
+    <% } %>
+</div>
+
+<div id="exercises">
+    <% if (exercises) { %>
+    <h3>Exercises</h3>
+
+    <form id="viewExerciseForm" name="viewExercise" action="/exercise/view" method="POST">
+        <select id="select-exercises" name="exerciseid">
+            <option value="-1">-- Select an exercise --</option>
+
+            <% for (var i = 0; i < exercises.length; i++) { %>
+            <option value="<%= exercises[i].ID %>"><%= exercises[i].Name + ', ' + exercises[i].Type %></option>
+            <% } %>
+        </select>
+        <input type="hidden" name="username" value="<%= user.Username %>">
+        <input type="hidden" name="userid" value="<%= user.ID %>">
+        <input type="submit" value="View History" />
+    </form>
+    <% } %>
+</div>
+
+<div id="workouts">
+
+    <h3>Workouts</h3>
+
+    <% if (workouts) { %>
+
+    <table class="info">
+        <tr>
+            <th></th>
+            <th>Date</th>
+            <th>Time of Day</th>
+            <th>Location</th>
+        </tr>
+
+        <% for (var i = 0; i <= 10 && i < workouts.length; i++) { %>
+        <tr <% if (i % 2 === 0) { %>class="alt"<% } %>>
+            <td>
+                <form id="viewWorkoutForm" name="viewWorkout" action="/workout/view" method="POST">
+                    <input type="hidden" name="username" value="<%= user.Username %>">
+                    <input type="hidden" name="userid" value="<%= user.ID %>">
+                    <input type="hidden" name="workoutid" value="<%= workouts[workouts.length - i - 1].ID %>">
+                    <input type="hidden" name="date" value="<%= workouts[workouts.length - i - 1].Date %>">
+                    <input type="hidden" name="timeOfDay" value="<%= workouts[workouts.length - i - 1].TimeOfDay.charAt(0) + workouts[workouts.length - i - 1].TimeOfDay.slice(1).toLowerCase() %>">
+                    <input type="hidden" name="location" value="<%= workouts[workouts.length - i - 1].Location %>">
+                    <input class="viewWorkoutButton" type="submit" value="View Workout" />
+                </form>
+            </td>
+            <td><%= workouts[workouts.length - i - 1].Date %></td>
+            <td><%= workouts[workouts.length - i - 1].TimeOfDay.charAt(0) + workouts[workouts.length - i - 1].TimeOfDay.slice(1).toLowerCase() %></td>
+            <td><%= workouts[workouts.length - i - 1].Location %></td>
+        </tr>
+        <% } %>
+    </table>
+
+    <p><a href="">All Workouts >></a></p>
+    <% } %>
+</div>
+
+<p><a href="/">< Home</a></p>
+
+<% include footer %>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#followUserButton').click(function() {
+
+            var payload = {
+                userid: <%= user.ID %>,
+                followerid: <%= homeuser.ID %>
+            };
+
+            $.post('/user/togglefollowing', payload, function(data) {
+                $('#followUserButton').val(data.following ? 'Unfollow' : 'Follow');
+            });
+        });
+    });
+</script>
