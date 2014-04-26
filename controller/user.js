@@ -41,8 +41,41 @@ router.post('/home', function(req, res) {
                     for (var i = 0; i < workouts.length; i++)
                         workouts[i].Date = dateformat(workouts[i].Date, 'm/d/yy');
 
-                    db.GetExercises(function(exercises) {
-                        res.render('userhome', {user: result[0], workouts: workouts, exercises: exercises});
+                    db.GetExercisesByUser(result[0].ID, function(exercises) {
+                        db.GetFollowers(result[0].ID, function(followers) {
+                            db.GetFollowing(result[0].ID, function(following) {
+
+                                console.log('Freinds and followers: ');
+                                console.log(followers);
+                                console.log(following);
+
+                                var friends = new Array();
+
+                                for (var i = 0; i < followers.length; i++) {
+                                    for (var j =0; j < following.length; j++) {
+                                        if (followers[i].ID === following[j].ID) {
+                                            friends.push(followers.splice(i, 1)[0]);
+                                            following.splice(j, 1);
+                                            i--;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                console.log(followers);
+                                console.log(following);
+                                console.log(friends);
+
+                                res.render('userhome', {user: result[0],
+                                                        workouts: workouts,
+                                                        exercises: exercises,
+                                                        followers: followers,
+                                                        following: following,
+                                                        friends: friends
+                                    }
+                                );
+                            });
+                        });
                     });
                 });
             else

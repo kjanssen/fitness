@@ -38,7 +38,7 @@ a:visited {
 a:hover {
     color:              #9acd32;}
 
-#header h1, #footer h4 {
+#header h1, #footer h4, .node h2, .node h3, .node h4 {
   color:            #000000;}
   
 #container {
@@ -66,6 +66,7 @@ a:hover {
   
 #content {
   padding:          20px 50px;
+  overflow: hidden;
   background:       #ffffff;}
 
 .top {
@@ -77,8 +78,24 @@ a:hover {
 .center {
   text-align:       center;}
 
+.floatright {
+    width: 320px;
+    float: right;
+    clear: right;
+    margin-bottom: 20px;
+}
+
 .node {
     border-radius:      15px;
     background:       #9acd32;
-    padding:          5px 10px;
+    padding:          10px;
 }
+
+.node a:link {
+    color:              #333333;}
+
+.node a:visited {
+    color:              #333333;}
+
+.node a:hover {
+    color:              #000000;}

@@ -1,5 +1,37 @@
 <% include header %>
 
-<h2>View Workout</h2>
+<h2>View <%= user.username %>'s Workout</h2>
+<div>
+    <table>
+        <tr>
+            <th>Date:</th><td><%= workout.date %></td>
+            <th>Time of Day:</th><td><%= workout.timeOfDay %></td>
+            <th>Location:</th><td><%= workout.location %></td>
+        </tr>
+    </table>
+</div>
+<table id="exerciseList" class="info">
+    <tr>
+        <th>Exercise</th>
+        <th>Weight</th>
+        <th>Sets</th>
+        <th>Reps</th>
+        <th>Duration</th>
+        <th>Completed</th>
+        <th>Comments</th>
+    </tr>
+
+    <% for (var i = 0; i < exercises.length; i++) { %>
+        <tr <%= (i % 2 === 0 ? 'class="alt"' : '') %>>
+            <td><%= exercises[i].Name + (exercises[i].Type === null ? '' : (', ' + exercises[i].Type)) %></td>
+            <td><%= exercises[i].Weight === null ? '' : exercises[i].Weight %></td>
+            <td><%= exercises[i].Sets === null ? '' : exercises[i].Sets %></td>
+            <td><%= exercises[i].Reps === null ? '' : exercises[i].Reps %></td>
+            <td><%= exercises[i].Duration === null ? '' : exercises[i].Duration %></td>
+            <td><%= exercises[i].Completed %></td>
+            <td><%= exercises[i].Comment === null ? '' : exercises[i].Comment %></td>
+        </tr>
+    <% } %>
+</table>
 
 <% include footer %>

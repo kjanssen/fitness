@@ -9,8 +9,10 @@ var connection = mysql.createConnection({
 
 exports.CheckUser = function(username, password, callback) {
 
-    var query = 'SELECT ID, Username, Password FROM user WHERE Username=' + connection.escape(username) +
-                ' AND Password=' + connection.escape(password) + ';';
+    var query = 'SELECT ID, Username, Password ' +
+                    'FROM user ' +
+                    'WHERE Username=' + connection.escape(username) + ' ' +
+                    'AND Password=' + connection.escape(password) + ';';
 
     connection.query(query, function(err, result) {
         console.log(result);
@@ -27,17 +29,18 @@ exports.CheckUser = function(username, password, callback) {
 
 exports.CreateUser = function(username, password, callback) {
 
-    var query = 'INSERT INTO user (Username, Password) VALUES (' + connection.escape(username) +
-        ', ' + connection.escape(password) + ');';
+    var query = 'INSERT INTO user (Username, Password) ' +
+                    'VALUES (' + connection.escape(username) + ', ' + connection.escape(password) + ');';
 
     connection.query(query, function(err, result) {
         if (err) {
             console.log(err);
 
-            if (err.code === 'ER_DUP_ENTRY')
+            if (err.code === 'ER_DUP_ENTRY') {
                 callback('Username already exists.');
-            else
+            } else {
                 callback('Error: Could not create user.');
+            }
 
             return;
         }
@@ -47,12 +50,47 @@ exports.CreateUser = function(username, password, callback) {
     });
 };
 
-exports.GetWorkouts = function(userid, callback) {
+exports.GetFollowers = function(userid, callback) {
 
-    var query = 'SELECT ID, Date, TimeOfDay, Location FROM workout WHERE UserID=' +
-        connection.escape(userid) + ';';
+    var query = 'SELECT u.ID, u.Username, u.Privacy ' +
+                    'FROM user u ' +
+                    'JOIN follower f ON u.ID=f.FollowerID ' +
+                    'JOIN user s ON f.UserID=s.ID ' +
+                    'WHERE f.UserID=' + connection.escape(userid) + ';';
 
-    connection.query(query, function(err, result) {
+    connection.query(query, function (err, result) {
+        console.log('GetFollowers err:');
+        console.log(err);
+        console.log('GetFollowers result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetFollowing = function(userid, callback) {
+
+    var query = 'SELECT s.ID, s.Username, s.Privacy ' +
+                    'FROM user u ' +
+                    'JOIN follower f ON u.ID=f.FollowerID ' +
+                    'JOIN user s ON f.UserID=s.ID ' +
+                    'WHERE f.FollowerID=' + connection.escape(userid) + ';';
+
+    connection.query(query, function (err, result) {
+        console.log('GetFollowing err:');
+        console.log(err);
+        console.log('GetFollowing result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetWorkouts = function (userid, callback) {
+
+    var query = 'SELECT ID, Date, TimeOfDay, Location ' +
+                    'FROM workout ' +
+                    'WHERE UserID=' + connection.escape(userid) + ';';
+
+    connection.query(query, function (err, result) {
         console.log('GetWorkouts err:');
         console.log(err);
         console.log('GetWorkouts result:');
@@ -61,11 +99,12 @@ exports.GetWorkouts = function(userid, callback) {
     });
 };
 
-exports.GetExercises = function(callback) {
+exports.GetExercises = function (callback) {
 
-    var query = 'SELECT ID, Name, Type FROM exercise;';
+    var query = 'SELECT ID, Name, Type ' +
+                    'FROM exercise;';
 
-    connection.query(query, function(err, result) {
+    connection.query(query, function (err, result) {
         console.log('GetExercises err:');
         console.log(err);
         console.log('GetExercises result:');
@@ -74,11 +113,76 @@ exports.GetExercises = function(callback) {
     });
 };
 
+exports.GetExerciseById = function (exerciseid, callback) {
+
+    var query = 'SELECT ID, Type, Name FROM exercise WHERE ID=' + connection.escape(exerciseid) + ';';
+
+    connection.query(query, function(err, result) {
+        console.log('GetExerciseByID err:');
+        console.log(err);
+        console.log('GetExerciseByID result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetExercisesByWorkout = function (workoutid, callback) {
+
+    var query = 'SELECT e.Type, e.Name, d.Weight, d.Sets, d.Reps, d.Duration, d.Completed, d.Comment ' +
+                    'FROM workout w ' +
+                    'JOIN exercise_done d ON w.ID=d.WorkoutID ' +
+                    'JOIN exercise e ON d.ExerciseID=e.ID ' +
+                    'WHERE w.ID=' + connection.escape(workoutid) + ';';
+
+    connection.query(query, function (err, result) {
+        console.log('GetExercisesByWorkout err:');
+        console.log(err);
+        console.log('GetExercisesByWorkout result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetExercisesByUser = function (userid, callback) {
+
+    var query = 'SELECT e.ID, e.Name, e.Type ' +
+                    'FROM workout w ' +
+                    'JOIN exercise_done d ON w.ID=d.WorkoutID ' +
+                    'JOIN exercise e ON d.ExerciseID=e.ID ' +
+                    'WHERE w.UserID=' + connection.escape(userid) + ' ' +
+                    'GROUP BY e.ID;';
+
+    connection.query(query, function(err, result) {
+        console.log('GetExercisesByUser err:');
+        console.log(err);
+        console.log('GetExercisesByUser result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetExerciseHistory = function(userid, exerciseid, callback) {
+
+    var query = 'SELECT w.Date, d.Weight, d.Sets, d.Reps, d.Duration, d.Completed, d.Comment ' +
+                    'FROM exercise_done d ' +
+                    'JOIN workout w ON d.WorkoutID=w.ID ' +
+                    'WHERE w.UserID=' + connection.escape(userid) + ' AND d.ExerciseID=' + connection.escape(exerciseid) + ' ' +
+                    'ORDER BY w.Date DESC;';
+
+    connection.query(query, function(err, result) {
+        console.log('GetExerciseHistory err:');
+        console.log(err);
+        console.log('GetExerciseHistory result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
 exports.CreateWorkout = function(workout, callback) {
 
-    var query = 'INSERT INTO workout (Date, UserID, Location, TimeOfDay) VALUES (' + connection.escape(workout.date) +
-                ', ' + connection.escape(workout.userid) + ', ' + connection.escape(workout.location) + ', ' +
-                connection.escape(workout.timeOfDay) + ');';
+    var query = 'INSERT INTO workout (Date, UserID, Location, TimeOfDay) ' +
+                    'VALUES (' + connection.escape(workout.date) + ', ' + connection.escape(workout.userid) + ', ' +
+                    connection.escape(workout.location) + ', ' + connection.escape(workout.timeOfDay) + ');';
 
     connection.query(query, function(err, result) {
         if (err) {

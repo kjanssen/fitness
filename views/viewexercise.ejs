@@ -1,0 +1,31 @@
+<% include header %>
+
+<h2><%= user.username %>'s Exercise History</h2>
+
+<h3><%= exercise.Name + ', ' + exercise.Type %></h3>
+
+<table class="info">
+    <tr>
+        <th>Date</th>
+        <th>Weight</th>
+        <th>Sets</th>
+        <th>Reps</th>
+        <th>Duration</th>
+        <th>Completed</th>
+        <th>Comments</th>
+    </tr>
+
+    <% for (var i = 0; i < history.length; i++) { %>
+        <tr>
+            <td><%= history[i].Date %></td>
+            <td><%= history[i].Weight === null ? '' : history[i].Weight %></td>
+            <td><%= history[i].Sets === null ? '' : history[i].Sets %></td>
+            <td><%= history[i].Reps === null ? '' : history[i].Reps %></td>
+            <td><%= history[i].Duration === null ? '' : history[i].Duration %></td>
+            <td><%= history[i].Completed %></td>
+            <td><%= history[i].Comment === null ? '' : history[i].Comment === null %></td>
+        </tr>
+    <% } %>
+</table>
+
+<% include footer %>

@@ -5,7 +5,7 @@ var router     = express.Router();
 router.use(express.static(__dirname + '/../public'));
 
 router.post('/new', function(req, res) {
-    console.log('Workout/new');
+    console.log('workout/new');
     console.log(req.body);
 
     db.GetExercises(function(exercises) {
@@ -42,6 +42,18 @@ router.post('/create', function(req, res) {
             res.send({message: failed + ' exercises not saved. ' + message});
         else
             res.send({message: result.message});
+    });
+});
+
+router.post('/view', function(req, res) {
+    console.log('Workout/view');
+    console.log(req.body);
+
+    db.GetExercisesByWorkout(req.body.workoutid, function(exercises) {
+        console.log(exercises);
+        res.render('viewworkout', { user: {userid: req.body.userid, username: req.body.username},
+                                    workout: {date: req.body.date, timeOfDay: req.body.timeOfDay, location: req.body.location},
+                                    exercises: exercises});
     });
 });
 
