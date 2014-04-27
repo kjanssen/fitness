@@ -1,5 +1,10 @@
 <% include header %>
-<input id="userid" type="hidden" value="<%= user.userid %>" />
+
+<form id="homeForm" name="homeForm" action="/user/home" method="POST" style="float:right; margin-top: 20px;">
+    <input type="hidden" name="userid" value="<%= user.userid %>">
+    <input id="userHomeButton" type="submit" value="<%= user.username %>'s Home" />
+</form>
+
 <h2><%= user.username %>'s New Workout</h2>
 
 <div id="workoutInfo">
@@ -142,7 +147,7 @@
             console.log(exercises);
 
             var workout = {
-                userid: <%= user.userid %>, //$('#userid').val(),
+                userid: <%= user.userid %>,
                 date: $('#date').val(),
                 timeOfDay: $('#timeOfDay').val(),
                 location: $('#location').val()
@@ -155,6 +160,7 @@
 
             $.post('/workout/create', payload, function(data) {
                 $('#output').empty().append(data.message);
+                $('#output').show();
             });
         });
 

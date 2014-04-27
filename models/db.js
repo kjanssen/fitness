@@ -48,8 +48,8 @@ exports.GetUserByID = function(userid, callback) {
 
 exports.CreateUser = function(username, password, callback) {
 
-    var query = 'INSERT INTO user (Username, Password) ' +
-                    'VALUES (' + connection.escape(username) + ', ' + connection.escape(password) + ');';
+    var query = 'INSERT INTO user (Username, Password, Privacy) ' +
+                    'VALUES (' + connection.escape(username) + ', ' + connection.escape(password) + ', \'PUBLIC\');';
 
     connection.query(query, function(err, result) {
         if (err) {
@@ -66,6 +66,44 @@ exports.CreateUser = function(username, password, callback) {
 
         console.log(result);
         callback('Created user "' + username + '"');
+    });
+};
+
+exports.ChangePassword = function(userid, password, callback) {
+
+    var query = 'UPDATE user ' +
+                    'SET Password=' + connection.escape(password) + ' ' +
+                    'WHERE ID=' + connection.escape(userid) + ';';
+
+    connection.query(query, function (err, result) {
+        console.log('ChangePassword err:');
+        console.log(err);
+        console.log('ChangePassword result:');
+        console.log(result);
+
+        if (err) callback(false)
+        else callback(true);
+    });
+};
+
+exports.UpdateInfo = function(userInfo, callback) {
+
+    var query = 'UPDATE user SET ' +
+                    'Age=' + userInfo.age + ', ' +
+                    'Gender=' + (userInfo.gender === 'null' ? 'null' : connection.escape(userInfo.gender)) + ', ' +
+                    'Height=' + userInfo.height + ', ' +
+                    'Weight=' + userInfo.weight + ', ' +
+                    'Privacy=' + connection.escape(userInfo.privacy) + ' ' +
+                    'WHERE ID=' + userInfo.userid + ';';
+
+    connection.query(query, function(err, result) {
+        console.log('UpdateInfo err:');
+        console.log(err);
+        console.log('UpdateInfo result:');
+        console.log(result);
+
+        if (err) callback(false)
+        else callback(true);
     });
 };
 
@@ -233,8 +271,11 @@ exports.GetExerciseHistory = function(userid, exerciseid, callback) {
 exports.CreateWorkout = function(workout, callback) {
 
     var query = 'INSERT INTO workout (Date, UserID, Location, TimeOfDay) ' +
-                    'VALUES (' + connection.escape(workout.date) + ', ' + connection.escape(workout.userid) + ', ' +
-                    connection.escape(workout.location) + ', ' + connection.escape(workout.timeOfDay) + ');';
+                    'VALUES (' +
+                    connection.escape(workout.date) + ', ' +
+                    connection.escape(workout.userid) + ', ' +
+                    connection.escape(workout.location) + ', ' +
+                    connection.escape(workout.timeOfDay) + ');';
 
     connection.query(query, function(err, result) {
         if (err) {
@@ -256,10 +297,15 @@ exports.CreateWorkout = function(workout, callback) {
 exports.AddExerciseDone = function(workoutid, exercise, callback) {
 
     var query = 'INSERT INTO exercise_done (WorkoutID, ExerciseID, Weight, Sets, Reps, Duration, Completed, Comment) ' +
-                'VALUES (' + connection.escape(workoutid) + ', ' + connection.escape(exercise.exerciseid) + ', ' +
-                connection.escape(exercise.weight) + ', ' + connection.escape(exercise.sets) + ', ' +
-                connection.escape(exercise.reps) + ', ' + connection.escape(exercise.duration) + ', ' +
-                connection.escape(exercise.completed) + ', ' + connection.escape(exercise.comments) + ');';
+                    'VALUES (' +
+                    connection.escape(workoutid) + ', ' +
+                    connection.escape(exercise.exerciseid) + ', ' +
+                    (exercise.weight === '0' ? 'null' : connection.escape(exercise.weight)) + ', ' +
+                    (exercise.sets === '0' ? 'null' : connection.escape(exercise.sets)) + ', ' +
+                    (exercise.reps === '0' ? 'null' : connection.escape(exercise.reps)) + ', ' +
+                    (exercise.duration === '00:00:00' ? 'null' : connection.escape(exercise.duration)) + ', ' +
+                    connection.escape(exercise.completed) + ', ' +
+                    (exercise.comments === '' ? 'null' : connection.escape(exercise.comments)) + ');';
 
     connection.query(query, function(err, result) {
         if (err) {

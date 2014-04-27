@@ -2,6 +2,12 @@
 <h2>Fitness App - <%= user.Username %>'s Home</h2>
 
 <div id="userinfo" class="node floatright">
+
+    <form id="editForm" name="editForm" action="/user/editinfo" method="POST" style="float:right; margin-top: 20px;">
+        <input type="hidden" name="userid" value="<%= user.ID %>">
+        <input id="userEditButton" type="submit" value="Edit" />
+    </form>
+
     <h3><%= user.Username %>'s Info</h3>
 
     <table>
@@ -126,10 +132,7 @@
             <% } %>
         </table>
 
-        <p><a href="">All Workouts >></a></p>
     <% } %>
 </div>
-
-<p><a href="/">< Home</a></p>
 
 <% include footer %>

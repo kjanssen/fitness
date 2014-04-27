@@ -1,5 +1,10 @@
 <% include header %>
 
+<form id="homeForm" name="homeForm" action="/user/home" method="POST" style="float:right; margin-top: 20px;">
+    <input type="hidden" name="userid" value="<%= user.userid %>">
+    <input id="userHomeButton" type="submit" value="<%= user.username %>'s Home" />
+</form>
+
 <h2><%= user.username %>'s Exercise History</h2>
 
 <h3><%= exercise.Name + ', ' + exercise.Type %></h3>
@@ -23,7 +28,7 @@
             <td><%= history[i].Reps === null ? '' : history[i].Reps %></td>
             <td><%= history[i].Duration === null ? '' : history[i].Duration %></td>
             <td><%= history[i].Completed %></td>
-            <td><%= history[i].Comment === null ? '' : history[i].Comment === null %></td>
+            <td><%= history[i].Comment === null ? '' : history[i].Comment %></td>
         </tr>
     <% } %>
 </table>

@@ -89,6 +89,57 @@ router.post('/home', function(req, res) {
     }
 });
 
+router.post('/editinfo', function(req, res) {
+    console.log(req.body);
+
+    db.GetUserByID(req.body.userid, function(err, users) {
+        if (err) throw err;
+        if (users.length > 0) {
+            res.render('edituserinfo', {user: users[0]});
+        }
+    });
+});
+
+router.post('/updateinfo', function(req, res) {
+    console.log('/user/updateinfo req.body:');
+    console.log(req.body);
+
+    var userInfo = {
+        userid: req.body.userid,
+        privacy: req.body.privacy,
+        age: req.body.age,
+        gender: req.body.gender,
+        height: req.body.height,
+        weight: req.body.weight
+    };
+
+    db.UpdateInfo(userInfo, function(success) {
+        if (success)
+            res.send({message: 'Information has been updated.'});
+        else
+            res.send({message: 'Error occurred while updating information.'});
+    });
+
+});
+
+router.post('/changepassword', function(req, res) {
+    console.log(req.body);
+
+    db.GetUserByPassword(req.body.username, req.body.oldpassword, function(err, users) {
+        if (err) throw err;
+        if (users.length > 0) {
+            db.ChangePassword(users[0].ID, req.body.newpassword, function(success) {
+                if (success)
+                    res.send('Password changed.');
+                else
+                    res.send('Error occurred while changing password.');
+            });
+        } else {
+            res.send('Old password not correct');
+        }
+    });
+});
+
 router.post('/view', function(req, res) {
     console.log(req.body);
 

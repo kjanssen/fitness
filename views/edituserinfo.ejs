@@ -1,0 +1,140 @@
+<% include header %>
+
+<form id="homeForm" name="homeForm" action="/user/home" method="POST" style="float:right; margin-top: 20px;">
+    <input type="hidden" name="userid" value="<%= user.ID %>">
+    <input id="userHomeButton" type="submit" value="<%= user.Username %>'s Home" />
+</form>
+
+<h2>Edit <%= user.Username %>'s Personal Information</h2>
+
+<table>
+    <tr>
+        <td>Age:</td>
+        <td><input type="number" id="age" value="<%= (user.Age === null ? 0 : user.Age) %>" /></td>
+    </tr>
+    <tr>
+        <td>Gender:</td>
+        <td>
+            <select id="gender">
+                <option value="none">-- Gender --</option>
+                <option value="M">M</option>
+                <option value="F">F</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Height:</td>
+        <td><input type="number" id="feet" style="width:40px;" value="<%= user.Height === null ? 0 : Math.floor(user.Height / 12) %>" /> feet,
+            <input type="number" id="inches" style="width:40px;" value="<%= user.Height === null ? 0 : (user.Height % 12) %>" /> inches</td>
+    </tr>
+    <tr>
+        <td>Weight:</td>
+        <td><input type="number" id="weight" value="<%= user.Weight === null ? 0 : user.Weight %>" /> lbs</td>
+    </tr>
+    <tr>
+        <td>Privacy:</td>
+        <td>
+            <select id="privacy">
+                <option value="PUBLIC">Public</option>
+                <option value="PRIVATE">Private</option>
+                <option value="FOLLOWERS">Followers</option>
+                <option value="FRIENDS">Friends</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input id="saveButton" type="submit" value="Save" /></td>
+    </tr>
+</table>
+
+<h3>New Password</h3>
+
+<table>
+    <tr>
+        <td>Old Password:</td>
+        <td><input id="oldPass" type="password" /></td>
+    </tr>
+    <tr>
+        <td>New Password:</td>
+        <td><input id="newPass1" type="password" /></td>
+    </tr>
+    <tr>
+        <td>Re-type Password:</td>
+        <td><input id="newPass2" type="password" /></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input id="newPassButton" type="submit" value="Save" /></td>
+    </tr>
+</table>
+
+<p id="output" class="node"></p>
+
+<% include footer %>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#gender').val('<%= (user.Gender === null ? 'none' : user.Gender) %>');
+        $('#privacy').val('<%= (user.Privacy === null ? 'PUBLIC' : user.Privacy) %>');
+        $('#output').hide();
+
+        $('#saveButton').click(function() {
+
+            var userInfo = {
+                userid: <%= user.ID %>,
+                age: ($('#age').val() === '0' ? null : parseInt($('#age').val())),
+                gender: ($('#gender').val() === 'none' ? null : $('#gender').val()),
+                height: (($('#feet').val() === '0' && $('#inches').val() === '0') ? null : parseInt($('#feet').val()) * 12 + parseInt($('#inches').val())),
+                weight: ($('#weight').val() === '0' ? null : parseInt($('#weight').val())),
+                privacy: $('#privacy').val()
+            };
+
+            console.log(userInfo);
+
+            $.post('/user/updateinfo', userInfo, function(data) {
+                $('#output').empty().append(data.message);
+                $('#output').show();
+            });
+        });
+
+        $('#newPassButton').click(function() {
+            if ( $('#newPass1').val() === $('#newPass2').val() &&
+                    $('#newPass1').val() !== '' &&
+                    $('#oldPass').val() !== '' &&
+                    $('#oldPass').val() !== $('#newPass1').val()) {
+                var payload = {
+                    username: '<%= user.Username %>',
+                    oldpassword: $('#oldPass').val(),
+                    newpassword: $('#newPass1').val()
+                };
+
+                console.log(payload);
+
+                $.ajax({
+                    url: "/user/changepassword",
+                    type: "POST",
+                    contentType: "application/json",
+                    processData: false,
+                    data: JSON.stringify(payload),
+                    complete: function(data) {
+                        console.log(data);
+                        $('#output').html(data.responseText);
+                        $('#output').show();
+                    }
+                });
+            } else if ($('#newPass1').val() !== $('#newPass2').val()) {
+                $('#output').html('New passwords do not match.');
+                $('#output').show();
+            } else if ($('#oldPass').val() === $('#newPass1').val()) {
+                $('#output').html('New password must not match old password. Are you sure you want to change your password?');
+                $('#output').show();
+            } else {
+                $('#output').html('Please fill all fields.');
+                $('#output').show();
+            }
+        });
+    });
+</script>
