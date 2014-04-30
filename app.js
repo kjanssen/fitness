@@ -4,6 +4,7 @@ var ejs        = require('ejs');
 var index      = require('./controller/index');
 var user       = require('./controller/user');
 var workout    = require('./controller/workout');
+var location   = require('./controller/location');
 var exercise   = require('./controller/exercise');
 var app        = express();
 
@@ -15,6 +16,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/', index);
 app.use('/user', user);
 app.use('/workout', workout);
+app.use('/location', location);
 app.use('/exercise', exercise);
 
 var server = app.listen(1337, function() {

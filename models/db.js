@@ -176,14 +176,29 @@ exports.ToggleFollowing = function(userid, followerid, callback) {
 
 exports.GetWorkouts = function (userid, callback) {
 
-    var query = 'SELECT ID, Date, TimeOfDay, Location ' +
-                    'FROM workout ' +
-                    'WHERE UserID=' + connection.escape(userid) + ';';
+    var query = 'SELECT w.ID, w.Date, w.TimeOfDay, l.Name as Location ' +
+                    'FROM workout w JOIN location l ON w.LocationID=l.ID ' +
+                    'WHERE w.UserID=' + connection.escape(userid) + ' ' +
+                    'ORDER BY w.Date;';
 
     connection.query(query, function (err, result) {
         console.log('GetWorkouts err:');
         console.log(err);
         console.log('GetWorkouts result:');
+        console.log(result);
+        callback(result);
+    });
+};
+
+exports.GetLocations = function (callback) {
+
+    var query = 'SELECT ID, Name ' +
+                    'FROM location;';
+
+    connection.query(query, function (err, result) {
+        console.log('GetLocations err:');
+        console.log(err);
+        console.log('GetLocations result:');
         console.log(result);
         callback(result);
     });
@@ -270,11 +285,11 @@ exports.GetExerciseHistory = function(userid, exerciseid, callback) {
 
 exports.CreateWorkout = function(workout, callback) {
 
-    var query = 'INSERT INTO workout (Date, UserID, Location, TimeOfDay) ' +
+    var query = 'INSERT INTO workout (Date, UserID, LocationID, TimeOfDay) ' +
                     'VALUES (' +
                     connection.escape(workout.date) + ', ' +
                     connection.escape(workout.userid) + ', ' +
-                    connection.escape(workout.location) + ', ' +
+                    workout.locationid + ', ' +
                     connection.escape(workout.timeOfDay) + ');';
 
     connection.query(query, function(err, result) {
@@ -327,7 +342,7 @@ exports.AddExerciseDone = function(workoutid, exercise, callback) {
 exports.CreateExercise = function(name, type, callback) {
 
     var query = 'INSERT INTO exercise (Name, Type) VALUES (' + connection.escape(name) + ', ' +
-                connection.escape(type) + ');';
+        connection.escape(type) + ');';
 
     connection.query(query, function(err, result) {
         if (err) {
@@ -343,5 +358,26 @@ exports.CreateExercise = function(name, type, callback) {
 
         console.log(result);
         callback(false, {message: 'Exercise has been added.', id: result.insertId});
+    });
+};
+
+exports.CreateLocation = function(name, callback) {
+
+    var query = 'INSERT INTO location (Name) VALUES (' + connection.escape(name) + ');';
+
+    connection.query(query, function(err, result) {
+        if (err) {
+            console.log(err);
+
+            if (err.code === 'ER_DUP_ENTRY')
+                callback(true, {message: 'Location already exists.', id: null});
+            else
+                callback(true, {message: 'Error: Could not add location.', id: null});
+
+            return;
+        }
+
+        console.log(result);
+        callback(false, {message: 'Location has been added.', id: result.insertId});
     });
 };

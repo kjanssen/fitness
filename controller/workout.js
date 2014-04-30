@@ -9,8 +9,12 @@ router.post('/new', function(req, res) {
     console.log(req.body);
 
     db.GetExercises(function(exercises) {
-        res.render('newworkout', { user: { userid: req.body.userid, username: req.body.username },
-                                   exercises: exercises});
+        db.GetLocations(function(locations) {
+            res.render('newworkout', {
+                user: { userid: req.body.userid, username: req.body.username },
+                exercises: exercises,
+                locations: locations});
+        });
     });
 });
 

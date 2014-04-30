@@ -28,10 +28,28 @@
         </tr>
         <tr>
             <td>Location:</td>
-            <td><input id="location" type="text" /></td>
+            <td>
+                <% if (locations) { %>
+                <select id="location">
+                    <option value="-1">-- Select a location --</option>
+                    <option value="-2" id="newLocation">-- New Location --</option>
+
+                    <% for (var i = 0; i < locations.length; i++) { %>
+                    <option value="<%= locations[i].ID %>"><%= locations[i].Name %></option>
+                    <% } %>
+                </select>
+                <% } %>
+            </td>
         </tr>
     </table>
 </div>
+
+<div id="newLocationDiv" class="node">
+    New Location:<br>
+    Name: <input id="locationName" type="text" />
+    <button id="newLocationButton">Add</button>
+</div>
+<div id="newLocationOutput" class="node"></div>
 
 <h4>Exercises</h4>
 <table id="exerciseList" class="info">
@@ -98,6 +116,8 @@
 
         var exercises = new Array();
 
+        $('#newLocationDiv').hide();
+        $('#newLocationOutput').hide();
         $('#exerciseList').hide();
         $('#newExerciseDiv').hide();
         $('#newExerciseOutput').hide();
@@ -148,7 +168,7 @@
                 userid: <%= user.userid %>,
                 date: $('#date').val(),
                 timeOfDay: $('#timeOfDay').val(),
-                location: $('#location').val()
+                locationid: $('#location').val()
             };
 
             var payload = {
@@ -159,6 +179,24 @@
             $.post('/workout/create', payload, function(data) {
                 $('#output').empty().append(data.message);
                 $('#output').show();
+            });
+        });
+
+        $('#newLocationButton').click(function() {
+            var newLocation = {
+                name: $('#locationName').val()
+            };
+
+            $.post('/location/create', newLocation, function(data) {
+                console.log(data);
+                $('#newLocationOutput').html(data.message);
+                $('#newLocationDiv').hide();
+                $('#newLocationOutput').show();
+
+                if (data.err === false) {
+                    $('#location').append('<option value="' + data.id + '">' + newLocation.name + '</option>');
+                    $('#location').val(data.id);
+                }
             });
         });
 
@@ -180,6 +218,15 @@
                     $('#exercise').val(data.id);
                 }
             });
+        });
+
+        $('#location').change(function() {
+            if ($('#location').val() === '-2') {
+                $('#newLocationDiv').show();
+            } else {
+                $('#newLocationDiv').hide();
+                $('#newLocationOutput').hide();
+            }
         });
 
         $('#exercise').change(function() {
