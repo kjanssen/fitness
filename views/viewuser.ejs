@@ -39,7 +39,7 @@
     No current friends
     <% } else { %>
     <% for (var i = 0; i < friends.length; i++) { %>
-    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+    <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
         <input type="hidden" name="userid" value="<%= friends[i].ID %>">
         <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
         <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
@@ -52,7 +52,7 @@
     No current following
     <% } else { %>
     <% for (var i = 0; i < following.length; i++) { %>
-    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+    <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
         <input type="hidden" name="userid" value="<%= following[i].ID %>">
         <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
         <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
@@ -65,7 +65,7 @@
     No current followers
     <% } else { %>
     <% for (var i = 0; i < followers.length; i++) { %>
-    <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+    <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
         <input type="hidden" name="userid" value="<%= followers[i].ID %>">
         <input type="hidden" name="homeuserid" value="<%= homeuser.ID %>">
         <input type="hidden" name="homeusername" value="<%= homeuser.Username %>">
@@ -79,7 +79,7 @@
     <% if (exercises) { %>
     <h3>Exercises</h3>
 
-    <form id="viewExerciseForm" name="viewExercise" action="/exercise/view" method="POST">
+    <form class="viewExerciseForm" name="viewExercise" action="/exercise/view" method="POST">
         <select id="select-exercises" name="exerciseid">
             <option value="-1">-- Select an exercise --</option>
 
@@ -111,7 +111,7 @@
         <% for (var i = 0; i <= 10 && i < workouts.length; i++) { %>
         <tr <% if (i % 2 === 0) { %>class="alt"<% } %>>
             <td>
-                <form id="viewWorkoutForm" name="viewWorkout" action="/workout/view" method="POST">
+                <form class="viewWorkoutForm" name="viewWorkout" action="/workout/view" method="POST">
                     <input type="hidden" name="username" value="<%= user.Username %>">
                     <input type="hidden" name="userid" value="<%= user.ID %>">
                     <input type="hidden" name="workoutid" value="<%= workouts[workouts.length - i - 1].ID %>">
@@ -131,8 +131,6 @@
     <% } %>
 </div>
 
-<% include footer %>
-
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -149,3 +147,5 @@
         });
     });
 </script>
+
+<% include footer %>

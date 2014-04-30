@@ -1,4 +1,5 @@
 <% include header %>
+
 <h2>Fitness App - <%= user.Username %>'s Home</h2>
 
 <div id="userinfo" class="node floatright">
@@ -37,7 +38,7 @@
             No current friends
         <% } else { %>
             <% for (var i = 0; i < friends.length; i++) { %>
-                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
                     <input type="hidden" name="userid" value="<%= friends[i].ID %>">
                     <input type="hidden" name="homeuserid" value="<%= user.ID %>">
                     <input type="hidden" name="homeusername" value="<%= user.Username %>">
@@ -50,7 +51,7 @@
             No current following
         <% } else { %>
             <% for (var i = 0; i < following.length; i++) { %>
-                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
                     <input type="hidden" name="userid" value="<%= following[i].ID %>">
                     <input type="hidden" name="homeuserid" value="<%= user.ID %>">
                     <input type="hidden" name="homeusername" value="<%= user.Username %>">
@@ -63,7 +64,7 @@
             No current followers
         <% } else { %>
             <% for (var i = 0; i < followers.length; i++) { %>
-                <form id="viewUserForm" name="viewUser" action="/user/view" method="POST">
+                <form class="viewUserForm" name="viewUser" action="/user/view" method="POST">
                     <input type="hidden" name="userid" value="<%= followers[i].ID %>">
                     <input type="hidden" name="homeuserid" value="<%= user.ID %>">
                     <input type="hidden" name="homeusername" value="<%= user.Username %>">
@@ -115,7 +116,7 @@
             <% for (var i = 0; i <= 10 && i < workouts.length; i++) { %>
                 <tr <% if (i % 2 === 0) { %>class="alt"<% } %>>
                     <td>
-                        <form id="viewWorkoutForm" name="viewWorkout" action="/workout/view" method="POST">
+                        <form class="viewWorkoutForm" name="viewWorkout" action="/workout/view" method="POST">
                             <input type="hidden" name="username" value="<%= user.Username %>">
                             <input type="hidden" name="userid" value="<%= user.ID %>">
                             <input type="hidden" name="workoutid" value="<%= workouts[workouts.length - i - 1].ID %>">
