@@ -1,9 +1,13 @@
 <% include header %>
 
-<form id="homeForm" name="homeForm" action="/user/home" method="POST" style="float:right; margin-top: 20px;">
-    <input type="hidden" name="userid" value="<%= user.userid %>">
-    <input id="userHomeButton" type="submit" value="<%= user.username %>'s Home" />
-</form>
+<script>
+    function goBack()
+    {
+        window.history.back()
+    }
+</script>
+
+<button onclick="goBack()" style="float:right; margin-top: 20px;">Back</button>
 
 <h2><%= user.username %>'s Exercise History</h2>
 
