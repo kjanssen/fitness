@@ -24,9 +24,16 @@ router.get('/create', function(req, res) {
 
 router.post('/create', function(req, res) {
     console.log(req.body);
-    db.CreateUser(req.body.username, req.body.password,
-        function(result) {
-            res.send(result);
+    db.CreateUser(req.body.username, req.body.password, function(result) {
+            console.log('CreateUser result: ');
+            console.log(result);
+            if(result.id !== null) {
+                db.ToggleFollowing('1', result.id, function(following) {
+                    res.send(result.message);
+                });
+            } else {
+                res.send(result.message);
+            }
         }
     );
 });

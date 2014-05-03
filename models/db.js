@@ -56,16 +56,16 @@ exports.CreateUser = function(username, password, callback) {
             console.log(err);
 
             if (err.code === 'ER_DUP_ENTRY') {
-                callback('Username already exists.');
+                callback({message: 'Username already exists.', id: null});
             } else {
-                callback('Error: Could not create user.');
+                callback({message: 'Error: Could not create user.', id: null});
             }
 
             return;
         }
 
         console.log(result);
-        callback('Created user "' + username + '"');
+        callback({message: 'Created user "' + username + '"', id: result.insertId});
     });
 };
 
