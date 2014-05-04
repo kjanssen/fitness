@@ -31,6 +31,9 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
+
+        $('#output').hide();
+
         $('#create-submit').click(function() {
             if ( $('#create-password1').val() === $('#create-password2').val() &&
                     $('#create-password1').val() !== '' &&
@@ -54,8 +57,10 @@
                 });
             } else if ($('#create-password1').val() !== $('#create-password2').val()) {
                 $('#output').html('Passwords do not match.');
+                $('#output').show();
             } else {
                 $('#output').html('Please fill all fields.');
+                $('#output').show();
             }
         });
     });
