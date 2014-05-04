@@ -53,6 +53,7 @@
                     data: JSON.stringify(payload),
                     complete: function(data) {
                         $('#output').html(data.responseText);
+			$('#output').show();
                     }
                 });
             } else if ($('#create-password1').val() !== $('#create-password2').val()) {
